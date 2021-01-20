@@ -1,0 +1,102 @@
+/** Routes for posts. */
+
+const express = require("express");
+const router = new express.Router();
+
+const { adminRequired, authRequired, ensureCorrectUser } = require("../middleware/auth");
+
+const Post = require("../models/post");
+const { validate } = require("jsonschema");
+const { postNewSchema, postUpdateSchema } = require("../schemas");
+const jwt = require("jsonwebtoken");
+const { SECRET } = require("../config");
+
+
+/** GET /[title]  =>  {post: post} */
+router.get("/:title", async function (req, res, next) {
+    try {
+        const post = await Post.findOne(req.params.title);
+        return res.json({ post });
+    }
+    catch (err) {
+        return next(err);
+    }
+});
+
+/** POST / {postData} =>  {post: newpost} */
+router.post("/", authRequired, async function (req, res, next) {
+    try {
+        const validation = validate(req.body, postNewSchema);
+
+        if (!validation.valid) {
+            return next({
+                status: 400,
+                message: validation.errors.map(e => e.stack)
+            });
+        }
+
+        const { username } = jwt.verify(req.body._token, SECRET);
+
+        const post = await Post.create(req.body, username);
+        return res.status(201).json({ post });   // 201 CREATED
+    }
+    catch (err) {
+        return next(err);
+    }
+});
+
+/** PATCH /[title] {postData} => {post: updatedpost}  */
+router.patch("/:title", async function (req, res, next) {
+    try {
+        const { username } = await Post.findOne(req.params.title);
+        const token = jwt.verify(req.body._token, SECRET);
+        if (username !== token.username) {
+            throw new Error("Unauthorized");
+        }
+
+        const validation = validate(req.body, postUpdateSchema);
+        if (!validation.valid) {
+            return next({
+                status: 400,
+                message: validation.errors.map(e => e.stack)
+            });
+        }
+
+        const blog = await Post.update(req.params.title, req.body);
+        return res.json({ blog });
+    }
+
+    catch (err) {
+        return next(err);
+    }
+});
+
+router.post("/:id/vote/:direction", async function (req, res, next) {
+    try {
+        let delta = req.params.direction === "up" ? +1 : -1;
+        const result = await Post.vote(delta, req.params.id)
+        return res.json(result);
+    } catch (err) {
+        return next(err);
+    }
+});
+
+
+/** DELETE /[title]  =>  {message: "Post deleted"}  */
+router.delete("/:title", async function (req, res, next) {
+    try {
+        const { username } = await Post.findOne(req.params.title);
+        const token = jwt.verify(req.body._token, SECRET);
+        if (username !== token.username) {
+            throw new Error("Unauthorized");
+        }
+
+        await Post.remove(req.params.title);
+        return res.json({ message: "Post deleted" });
+    }
+    catch (err) {
+        return next(err);
+    }
+});
+
+module.exports = router;

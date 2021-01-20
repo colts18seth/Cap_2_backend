@@ -1,0 +1,31 @@
+{
+	"$id": "http://example.com/example.json",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"title": {
+			"$id": "/properties/title",
+			"type": "string",
+			"title": "The Title Schema ",
+			"default": "",
+			"minLength": 1,
+			"maxLength": 55,
+			"examples": ["Rithm Inc"]
+		},
+		"votes": {
+			"$id": "/properties/votes",
+			"type": "number",
+			"title": "The Votes Schema ",
+			"default": 0,
+			"examples": [18]
+		},
+		"_token": {
+			"$id": "/properties/token",
+			"type": "string",
+			"title": "The Token Schema ",
+			"default": "",
+			"examples": ["foo123"]
+		}
+	},
+	"required": ["title", "_token"]
+}

@@ -1,0 +1,44 @@
+{
+	"$id": "http://example.com/example.json",
+	"type": "object",
+	"additionalProperties": false,
+	"properties": {
+		"data": {
+			"$id": "/properties/data",
+			"type": "string",
+			"title": "The Data Schema ",
+			"default": "",
+			"minLength": 1,
+			"examples": ["foo123"]
+		},
+		"title": {
+			"$id": "/properties/title",
+			"type": "string",
+			"title": "The Title Schema ",
+			"default": "",
+			"examples": ["foo123"]
+		},
+		"blog_id": {
+			"$id": "/properties/blog_id",
+			"type": "number",
+			"title": "The Blog_id Schema ",
+			"default": "",
+			"examples": [18]
+		},
+		"user_id": {
+			"$id": "/properties/user_id",
+			"type": "number",
+			"title": "The User_id Schema ",
+			"default": "",
+			"examples": [18]
+		},
+		"_token": {
+			"$id": "/properties/token",
+			"type": "string",
+			"title": "The Token Schema ",
+			"default": "",
+			"examples": ["foo123"]
+		}
+	},
+	"required": ["title", "data", "_token", "user_id", "blog_id"]
+}
