@@ -16,6 +16,11 @@ const blogsRoutes = require("./routes/blogs");
 const postsRoutes = require("./routes/posts");
 const authRoutes = require("./routes/auth");
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+});
+
 app.use("/users", usersRoutes);
 app.use("/blogs", blogsRoutes);
 app.use("/posts", postsRoutes);
