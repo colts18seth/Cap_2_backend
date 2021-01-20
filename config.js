@@ -16,7 +16,7 @@ let DB_URI;
 if (process.env.NODE_ENV === "test") {
     DB_URI = "key_blogger_test";
 } else {
-    DB_URI = process.env.DATABASE_URL || 'key_blogger';
+    DB_URI = "https://key-blogger-backend.herokuapp.com" || 'key_blogger';
 }
 
 console.log("Using database", DB_URI);
