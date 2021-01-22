@@ -5,8 +5,6 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-app.use(cors());
-
 // logging system
 const morgan = require("morgan");
 app.use(morgan("tiny"));
@@ -16,7 +14,6 @@ const blogsRoutes = require("./routes/blogs");
 const postsRoutes = require("./routes/posts");
 const authRoutes = require("./routes/auth");
 
-app.options('*', cors())
 app.use("/users", usersRoutes);
 app.use("/blogs", blogsRoutes);
 app.use("/posts", postsRoutes);
