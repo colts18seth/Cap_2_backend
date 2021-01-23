@@ -7,7 +7,7 @@ const SECRET = process.env.SECRET_KEY || 'test';
 const PORT = +process.env.PORT || 3001;
 
 // database is:
-// - on AWS, get from env var DATABASE_URL
+// - on Heroku, get from env var DATABASE_URL
 // - in testing, 'key_blogger-test'
 // - else: 'key_blogger'
 
