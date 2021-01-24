@@ -15,7 +15,6 @@ class Blog {
         // queryValues so we can generate the right SQL
 
         if (query) {
-            console.log(query)
             if (query.search) {
                 queryValues.push(`%${query.search}%`);
                 whereExpressions.push(`title ILIKE $${queryValues.length}`);

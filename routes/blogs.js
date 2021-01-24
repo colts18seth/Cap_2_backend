@@ -3,7 +3,7 @@
 const express = require("express");
 const router = new express.Router();
 
-const { adminRequired, authRequired, ensureCorrectUser } = require("../middleware/auth");
+const { authRequired } = require("../middleware/auth");
 
 const Blog = require("../models/blog");
 const { validate } = require("jsonschema");

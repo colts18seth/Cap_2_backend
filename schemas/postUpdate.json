@@ -12,13 +12,11 @@
 			"maxLength": 55,
 			"examples": ["hueter"]
 		},
-		"text_data": {
-			"$id": "/properties/text_data",
+		"data": {
+			"$id": "/properties/data",
 			"type": "string",
-			"title": "The Text_data Schema ",
+			"title": "The data Schema ",
 			"default": "",
-			"minLength": 1,
-			"maxLength": 55,
 			"examples": ["foo123"]
 		},
 		"votes": {
@@ -50,5 +48,5 @@
 			"examples": ["foo123"]
 		}
 	},
-	"required": ["title", "text_data", "_token"]
+	"required": ["title", "data", "_token"]
 }

@@ -3,7 +3,7 @@
 const express = require("express");
 const router = new express.Router();
 
-const { adminRequired, authRequired, ensureCorrectUser } = require("../middleware/auth");
+const { authRequired } = require("../middleware/auth");
 
 const Post = require("../models/post");
 const { validate } = require("jsonschema");
@@ -45,6 +45,16 @@ router.post("/", authRequired, async function (req, res, next) {
     }
 });
 
+router.post("/:id/vote/:direction", async function (req, res, next) {
+    try {
+        let delta = req.params.direction === "up" ? +1 : -1;
+        const result = await Post.vote(delta, req.params.id)
+        return res.json(result);
+    } catch (err) {
+        return next(err);
+    }
+});
+
 /** PATCH /[title] {postData} => {post: updatedpost}  */
 router.patch("/:title", async function (req, res, next) {
     try {
@@ -70,17 +80,6 @@ router.patch("/:title", async function (req, res, next) {
         return next(err);
     }
 });
-
-router.post("/:id/vote/:direction", async function (req, res, next) {
-    try {
-        let delta = req.params.direction === "up" ? +1 : -1;
-        const result = await Post.vote(delta, req.params.id)
-        return res.json(result);
-    } catch (err) {
-        return next(err);
-    }
-});
-
 
 /** DELETE /[title]  =>  {message: "Post deleted"}  */
 router.delete("/:title", async function (req, res, next) {
