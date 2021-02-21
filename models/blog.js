@@ -43,19 +43,19 @@ class Blog {
         // return result.rows;
     }
 
-    /** Given a blog title, return data about blog. */
-    static async findOne(title) {
+    /** Given a blog id, return data about blog. */
+    static async findOne(id) {
         const blogRes = await db.query(
             `SELECT *
                 FROM blogs AS b
                 JOIN users AS u ON b.user_id=u.user_id
-                WHERE b.title = $1`,
-            [title]);
+                WHERE b.id = $1`,
+            [id]);
 
         const blog = blogRes.rows[0];
 
         if (!blog) {
-            const error = new Error(`There exists no blog '${title}'`);
+            const error = new Error(`No blog exists with ID - '${id}'`);
             error.status = 404;   // 404 NOT FOUND
             throw error;
         }
@@ -64,8 +64,8 @@ class Blog {
             `SELECT *
                FROM blogs AS b
                  JOIN posts AS p ON b.blog_id = p.blog_id
-               WHERE b.title = $1`,
-            [title]);
+               WHERE b.id = $1`,
+            [id]);
 
         blog.posts = blogPostsRes.rows;
         return blog;
@@ -74,6 +74,7 @@ class Blog {
     /** Create a blog, update db, return new blog. */
     static async create(data, username) {
         const duplicateCheck = await db.query(
+            //?? check duplicates by user_id and blog_title ?composite relationship research
             `SELECT * 
             FROM blogs 
             WHERE title = $1`,
@@ -122,19 +123,19 @@ class Blog {
      * Return data for changed blog.
      *
      */
-    static async update(title, data) {
+    static async update(id, data) {
         let { query, values } = sqlForPartialUpdate(
             "blogs",
             data,
-            "title",
-            title
+            "id",
+            id
         );
 
         const result = await db.query(query, values);
         const blog = result.rows[0];
 
         if (!blog) {
-            let notFound = new Error(`There exists no blog '${title}`);
+            let notFound = new Error(`No blog exists with ID - '${id}`);
             notFound.status = 404;
             throw notFound;
         }
@@ -143,15 +144,15 @@ class Blog {
     }
 
     /** Delete given blog from database; returns undefined. */
-    static async remove(title) {
+    static async remove(id) {
         const result = await db.query(
             `DELETE FROM blogs 
-          WHERE title = $1 
-          RETURNING title`,
-            [title]);
+          WHERE id = $1 
+          RETURNING id`,
+            [id]);
 
         if (result.rows.length === 0) {
-            let notFound = new Error(`There exists no blog '${title}`);
+            let notFound = new Error(`There exists no blog '${id}`);
             notFound.status = 404;
             throw notFound;
         }
