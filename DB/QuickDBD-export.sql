@@ -26,11 +26,8 @@ CREATE TABLE "blogs"
     "votes" int NOT NULL,
     "user_id" int NOT NULL,
     CONSTRAINT "pk_Blog" PRIMARY KEY (
-        "blog_id"
-     ),
-    CONSTRAINT "uc_Blog_title" UNIQUE (
-        "title"
-    )
+        "blog_id", "title", "user_id"
+     )
 );
 
 CREATE TABLE "posts"
@@ -43,7 +40,7 @@ CREATE TABLE "posts"
     "blog_id" int NOT NULL,
     "user_id" int NOT NULL,
     CONSTRAINT "pk_Post" PRIMARY KEY (
-        "post_id"
+        "post_id", "user_id", "title"
      )
 );
 
