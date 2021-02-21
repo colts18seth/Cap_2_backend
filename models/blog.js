@@ -49,7 +49,7 @@ class Blog {
             `SELECT *
                 FROM blogs AS b
                 JOIN users AS u ON b.user_id=u.user_id
-                WHERE b.id = $1`,
+                WHERE b.blog_id = $1`,
             [id]);
 
         const blog = blogRes.rows[0];
@@ -64,7 +64,7 @@ class Blog {
             `SELECT *
                FROM blogs AS b
                  JOIN posts AS p ON b.blog_id = p.blog_id
-               WHERE b.id = $1`,
+               WHERE b.blog_id = $1`,
             [id]);
 
         blog.posts = blogPostsRes.rows;
@@ -127,7 +127,7 @@ class Blog {
         let { query, values } = sqlForPartialUpdate(
             "blogs",
             data,
-            "id",
+            "blog_id",
             id
         );
 
@@ -147,8 +147,8 @@ class Blog {
     static async remove(id) {
         const result = await db.query(
             `DELETE FROM blogs 
-          WHERE id = $1 
-          RETURNING id`,
+          WHERE blog_id = $1 
+          RETURNING blog_id`,
             [id]);
 
         if (result.rows.length === 0) {
