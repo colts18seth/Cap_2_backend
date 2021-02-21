@@ -108,11 +108,19 @@ class Blog {
     }
 
     static async vote(delta, id) {
-        const result = await db.query(
-            "UPDATE blogs SET votes=votes + $1 WHERE blog_id = $2 RETURNING votes",
-            [delta, id]);
+        const currVotes = await db.query(
+            "SELECT votes from blogs WHERE blog_id = $1",
+            [id]);
 
-        return result.rows[0];
+        if (currVotes.rows[0].votes === 0 && delta === -1) {
+            return 0;
+        } else {
+            const result = await db.query(
+                "UPDATE blogs SET votes=votes + $1 WHERE blog_id = $2 RETURNING votes",
+                [delta, id]);
+
+            return result.rows[0];
+        }
     }
 
     /** Update blog data with `data`.
