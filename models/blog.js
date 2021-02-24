@@ -33,14 +33,6 @@ class Blog {
         let finalQuery = baseQuery + whereExpressions.join(" AND ") + " ORDER BY title";
         const blogsRes = await db.query(finalQuery, queryValues);
         return blogsRes.rows;
-
-        // const result = await db.query(
-        //     `SELECT *
-        //       FROM blogs
-        //       INNER JOIN users ON blogs.user_id=users.user_id
-        //       `);
-
-        // return result.rows;
     }
 
     /** Given a blog id, return data about blog. */
@@ -166,6 +158,5 @@ class Blog {
         }
     }
 }
-
 
 module.exports = Blog;
