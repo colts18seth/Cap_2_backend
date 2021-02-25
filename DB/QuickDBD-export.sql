@@ -1,7 +1,6 @@
 ﻿DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS blogs CASCADE;
 DROP TABLE IF EXISTS posts CASCADE;
-DROP TABLE IF EXISTS comments CASCADE;
 
 CREATE TABLE "users"
 (
@@ -26,8 +25,11 @@ CREATE TABLE "blogs"
     "votes" int NOT NULL,
     "user_id" int NOT NULL,
     CONSTRAINT "pk_Blog" PRIMARY KEY (
-        "blog_id", "title", "user_id"
-     )
+        "blog_id"
+     ),
+    CONSTRAINT "no_dup_blog" UNIQUE (
+        "title",  "user_id"
+    )
 );
 
 CREATE TABLE "posts"
@@ -40,8 +42,11 @@ CREATE TABLE "posts"
     "blog_id" int NOT NULL,
     "user_id" int NOT NULL,
     CONSTRAINT "pk_Post" PRIMARY KEY (
-        "post_id", "user_id", "title"
-     )
+        "post_id"
+     ),
+    CONSTRAINT "no_dup_post" UNIQUE (
+        "title", "user_id"
+    )
 );
 
 ALTER TABLE "blogs" ADD CONSTRAINT "fk_Blog_userId" FOREIGN KEY("user_id")

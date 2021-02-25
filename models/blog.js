@@ -65,19 +65,18 @@ class Blog {
 
     /** Create a blog, update db, return new blog. */
     static async create(data, username) {
-        const duplicateCheck = await db.query(
-            //?? check duplicates by user_id and blog_title ?composite relationship research
-            `SELECT * 
-            FROM blogs 
-            WHERE title = $1`,
-            [data.title]);
+        // const duplicateCheck = await db.query(
+        //     `SELECT * 
+        //     FROM blogs 
+        //     WHERE title = $1`,
+        //     [data.title]);
 
-        if (duplicateCheck.rows[0]) {
-            let duplicateError = new Error(
-                `There already exists a blog with title '${data.title}`);
-            duplicateError.status = 409; // 409 Conflict
-            throw duplicateError
-        }
+        // if (duplicateCheck.rows[0]) {
+        //     let duplicateError = new Error(
+        //         `There already exists a blog with title '${data.title}`);
+        //     duplicateError.status = 409; // 409 Conflict
+        //     throw duplicateError
+        // }
 
         const user = await db.query(
             `SELECT user_id
@@ -152,7 +151,7 @@ class Blog {
             [id]);
 
         if (result.rows.length === 0) {
-            let notFound = new Error(`There exists no blog '${id}`);
+            let notFound = new Error(`No blog exists with ID - '${id}`);
             notFound.status = 404;
             throw notFound;
         }
