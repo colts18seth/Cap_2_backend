@@ -99,6 +99,7 @@ class Blog {
         return result.rows[0];
     }
 
+
     static async vote(delta, blog_id) {
         const currVotes = await db.query(
             "SELECT votes from blogs WHERE blog_id = $1",
