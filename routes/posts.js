@@ -12,10 +12,10 @@ const jwt = require("jsonwebtoken");
 const { SECRET } = require("../config");
 
 
-/** GET /[title]  =>  {post: post} */
-router.get("/:title", async function (req, res, next) {
+/** GET /[id]  =>  {post: post} */
+router.get("/:id", async function (req, res, next) {
     try {
-        const post = await Post.findOne(req.params.title);
+        const post = await Post.findOne(req.params.id);
         return res.json({ post });
     }
     catch (err) {
@@ -56,9 +56,9 @@ router.post("/:id/vote/:direction", async function (req, res, next) {
 });
 
 /** PATCH /[title] {postData} => {post: updatedpost}  */
-router.patch("/:title", async function (req, res, next) {
+router.patch("/:id", async function (req, res, next) {
     try {
-        const { username } = await Post.findOne(req.params.title);
+        const { username } = await Post.findOne(req.params.id);
         const token = jwt.verify(req.body._token, SECRET);
         if (username !== token.username) {
             throw new Error("Unauthorized");
@@ -72,7 +72,7 @@ router.patch("/:title", async function (req, res, next) {
             });
         }
 
-        const blog = await Post.update(req.params.title, req.body);
+        const blog = await Post.update(req.params.id, req.body);
         return res.json({ blog });
     }
 
@@ -82,15 +82,15 @@ router.patch("/:title", async function (req, res, next) {
 });
 
 /** DELETE /[title]  =>  {message: "Post deleted"}  */
-router.delete("/:title", async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) {
     try {
-        const { username } = await Post.findOne(req.params.title);
+        const { username } = await Post.findOne(req.params.id);
         const token = jwt.verify(req.body._token, SECRET);
         if (username !== token.username) {
             throw new Error("Unauthorized");
         }
 
-        await Post.remove(req.params.title);
+        await Post.remove(req.params.id);
         return res.json({ message: "Post deleted" });
     }
     catch (err) {
