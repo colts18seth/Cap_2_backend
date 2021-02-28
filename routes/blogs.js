@@ -24,10 +24,10 @@ router.get("/", async function (req, res, next) {
 });
 
 
-/** GET /[title]  =>  {blog: blog} */
-router.get("/:title", async function (req, res, next) {
+/** GET /[id]  =>  {blog: blog} */
+router.get("/:id", async function (req, res, next) {
     try {
-        const blog = await Blog.findOne(req.params.title);
+        const blog = await Blog.findOne(req.params.id);
         return res.json({ blog });
     }
     catch (err) {
@@ -69,9 +69,9 @@ router.post("/:id/vote/:direction", async function (req, res, next) {
 
 
 /** PATCH /[title] {blogData} => {blog: updatedblog}  */
-router.patch("/:title", async function (req, res, next) {
+router.patch("/:id", async function (req, res, next) {
     try {
-        const { username } = await Blog.findOne(req.params.title);
+        const { username } = await Blog.findOne(req.params.id);
         const token = jwt.verify(req.body._token, SECRET);
         if (username !== token.username) {
             throw new Error("Unauthorized");
@@ -85,7 +85,7 @@ router.patch("/:title", async function (req, res, next) {
             });
         }
 
-        const blog = await Blog.update(req.params.title, req.body);
+        const blog = await Blog.update(req.params.id, req.body);
         return res.json({ blog });
     }
 
@@ -96,15 +96,15 @@ router.patch("/:title", async function (req, res, next) {
 
 
 /** DELETE /[title]  =>  {message: "Blog deleted"}  */
-router.delete("/:title", async function (req, res, next) {
+router.delete("/:id", async function (req, res, next) {
     try {
-        const { username } = await Blog.findOne(req.params.title);
+        const { username } = await Blog.findOne(req.params.id);
         const token = jwt.verify(req.body._token, SECRET);
         if (username !== token.username) {
             throw new Error("Unauthorized");
         }
 
-        await Blog.remove(req.params.title);
+        await Blog.remove(req.params.id);
         return res.json({ message: "Blog deleted" });
     }
     catch (err) {

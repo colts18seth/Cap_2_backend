@@ -20,7 +20,7 @@ class Post {
     /** Find all post from a blog. */
     static async findAll(blog_id) {
         const result = await db.query(
-            `SELECT p.title, p.data, p.time, p.votes, b.title AS blog_title, u.username
+            `SELECT *
                     FROM posts AS p
                     INNER JOIN blogs AS b ON p.blog_id=b.blog_id
                     INNER JOIN users AS u ON p.user_id=u.user_id
@@ -31,14 +31,14 @@ class Post {
     }
 
     /** Given a post id, return data about post. */
-    static async findOne(title) {
+    static async findOne(post_id) {
         const postRes = await db.query(
-            `SELECT p.title, p.data, p.time, p.votes, b.title AS blog_title, u.username
+            `SELECT *
                 FROM posts AS p
                 INNER JOIN blogs AS b ON p.blog_id=b.blog_id
                 INNER JOIN users AS u ON p.user_id=u.user_id
-                WHERE p.title = $1`,
-            [title]);
+                WHERE p.post_id = $1`,
+            [post_id]);
 
         const post = postRes.rows[0];
 
@@ -51,17 +51,17 @@ class Post {
         return post;
     }
 
-    static async vote(delta, id) {
+    static async vote(delta, post_id) {
         const currVotes = await db.query(
             "SELECT votes from posts WHERE post_id = $1",
-            [id]);
+            [post_id]);
 
         if (currVotes.rows[0].votes === 0 && delta === -1) {
             return 0;
         } else {
             const result = await db.query(
                 "UPDATE posts SET votes=votes + $1 WHERE post_id = $2 RETURNING votes",
-                [delta, id]);
+                [delta, post_id]);
 
             return result.rows[0];
         }
@@ -75,19 +75,19 @@ class Post {
      * Return data for changed post.
      *
      */
-    static async update(title, data) {
+    static async update(post_id, data) {
         let { query, values } = sqlForPartialUpdate(
             "posts",
             data,
-            "title",
-            title
+            "post_id",
+            post_id
         );
 
         const result = await db.query(query, values);
         const post = result.rows[0];
 
         if (!post) {
-            let notFound = new Error(`There exists no post '${title}`);
+            let notFound = new Error(`There exists no post '${post_id}`);
             notFound.status = 404;
             throw notFound;
         }
@@ -96,15 +96,15 @@ class Post {
     }
 
     /** Delete given post from database; returns undefined. */
-    static async remove(title) {
+    static async remove(post_id) {
         const result = await db.query(
             `DELETE FROM posts 
-            WHERE title = $1 
+            WHERE post_id = $1 
             RETURNING title`,
-            [title]);
+            [post_id]);
 
         if (result.rows.length === 0) {
-            let notFound = new Error(`There exists no post '${title}`);
+            let notFound = new Error(`There exists no post '${post_id}`);
             notFound.status = 404;
             throw notFound;
         }
