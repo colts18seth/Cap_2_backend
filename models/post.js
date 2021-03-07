@@ -18,13 +18,36 @@ class Post {
     }
 
     /** Find most recent posts */
-    static async findRecent() {
-        const result = await db.query(
-            `SELECT p.post_id, p.title, p.data, p.time, p.votes, p.blog_id, p.user_id, u.username, b.title AS blog_title
+    static async findRecent(query) {
+        let baseQuery = `SELECT p.post_id, p.title, p.data, p.time, p.votes, p.blog_id, p.user_id, u.username, b.title AS blog_title
                     FROM posts AS p
                     FULL JOIN blogs AS b ON p.blog_id=b.blog_id
-                    INNER JOIN users AS u ON p.user_id=u.user_id
-                    ORDER BY p.post_id DESC`);
+                    INNER JOIN users AS u ON p.user_id=u.user_id`;
+
+        let whereExpressions = [];
+        let queryValues = [];
+
+        // For each possible search term, add to whereExpressions and
+        // queryValues so we can generate the right SQL
+
+        if (query) {
+            if (query.search) {
+                queryValues.push(`%${query.search}%`);
+                whereExpressions.push(`p.title ILIKE $${queryValues.length}`);
+            } else if (query.filter) {
+                queryValues.push(`%${query.filter}%`);
+                whereExpressions.push(`username ILIKE $${queryValues.length}`);
+            }
+        }
+
+        if (whereExpressions.length > 0) {
+            baseQuery += " WHERE ";
+        }
+
+        // Finalize query and return results
+
+        let finalQuery = baseQuery + whereExpressions.join(" AND ") + " ORDER BY p.post_id DESC";
+        const result = await db.query(finalQuery, queryValues);
         return result.rows;
     }
 

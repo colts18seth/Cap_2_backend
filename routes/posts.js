@@ -14,7 +14,7 @@ const { SECRET } = require("../config");
 /** GET / =>  {posts: {post: {}, post, {}}}   */
 router.get("/", async function (req, res, next) {
     try {
-        const posts = await Post.findRecent();
+        const posts = await Post.findRecent(req.query);
         return res.json({ posts });
     }
     catch (err) {
