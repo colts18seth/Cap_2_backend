@@ -23,9 +23,8 @@ class Post {
             `SELECT p.post_id, p.title, p.data, p.time, p.votes, p.blog_id, p.user_id, u.username, b.title AS blog_title
                     FROM posts AS p
                     FULL JOIN blogs AS b ON p.blog_id=b.blog_id
-                    FULL JOIN users AS u ON p.user_id=u.user_id
+                    INNER JOIN users AS u ON p.user_id=u.user_id
                     ORDER BY p.post_id DESC`);
-
         return result.rows;
     }
 
