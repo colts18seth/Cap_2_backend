@@ -4,7 +4,6 @@ const partialUpdate = require("../helpers/partialUpdate");
 
 const BCRYPT_WORK_FACTOR = 10;
 
-
 /** Related functions for users. */
 class User {
 
@@ -70,14 +69,34 @@ class User {
 
     /** Given a username, return data about user. */
     static async findOne(username) {
-        const userRes = await db.query(
-            `SELECT u.username, u.first_name, u.last_name, u.email, b.title
-            FROM users AS u
-                JOIN blogs AS b ON u.user_id=b.user_id
+        const userResult = await db.query(
+            `SELECT *
+            FROM users
             WHERE username = $1`,
             [username]);
 
-        const user = userRes.rows[0];
+        const user = userResult.rows[0];
+
+        const blogsResult = await db.query(
+            `SELECT *
+          FROM blogs AS b
+          WHERE b.user_id = $1
+          ORDER BY blog_id`,
+            [user.user_id]
+        );
+
+        const blogs = blogsResult.rows;
+
+        const postsResult = await db.query(
+            `SELECT *, p.title,  b.title AS blog_title
+          FROM posts AS p
+          INNER JOIN blogs AS b ON p.blog_id=b.blog_id
+          WHERE p.user_id = $1
+          ORDER BY post_id`,
+            [user.user_id]
+        );
+
+        const posts = postsResult.rows;
 
         if (!user) {
             const error = new Error(`There exists no user '${username}'`);
@@ -85,7 +104,7 @@ class User {
             throw error;
         }
 
-        return user;
+        return { user: user, blogs, posts };
     }
 
     /** Update user data with `data`.

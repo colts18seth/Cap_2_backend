@@ -65,18 +65,6 @@ class Blog {
 
     /** Create a blog, update db, return new blog. */
     static async create(data, username) {
-        // const duplicateCheck = await db.query(
-        //     `SELECT * 
-        //     FROM blogs 
-        //     WHERE title = $1`,
-        //     [data.title]);
-
-        // if (duplicateCheck.rows[0]) {
-        //     let duplicateError = new Error(
-        //         `There already exists a blog with title '${data.title}`);
-        //     duplicateError.status = 409; // 409 Conflict
-        //     throw duplicateError
-        // }
 
         const user = await db.query(
             `SELECT user_id

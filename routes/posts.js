@@ -11,6 +11,16 @@ const { postNewSchema, postUpdateSchema } = require("../schemas");
 const jwt = require("jsonwebtoken");
 const { SECRET } = require("../config");
 
+/** GET / =>  {posts: {post: {}, post, {}}}   */
+router.get("/", async function (req, res, next) {
+    try {
+        const posts = await Post.findRecent();
+        return res.json({ posts });
+    }
+    catch (err) {
+        return next(err);
+    }
+});
 
 /** GET /[id]  =>  {post: post} */
 router.get("/:id", async function (req, res, next) {

@@ -11,10 +11,22 @@ class Post {
             `INSERT INTO posts (title, data, time, votes, blog_id, user_id) 
              VALUES ($1, $2, $3, $4, $5, $6) 
              RETURNING title, data, time, votes, blog_id, user_id`,
-            [data.title, data.data, moment().format('MMMM Do YYYY, h:mm:ss a'), data.votes || 0, data.blog_id, data.user_id]
+            [data.title, data.data, moment().format('M/D/YYYY'), data.votes || 0, data.blog_id, data.user_id]
         );
 
         return result.rows[0];
+    }
+
+    /** Find most recent posts */
+    static async findRecent() {
+        const result = await db.query(
+            `SELECT p.post_id, p.title, p.data, p.time, p.votes, p.blog_id, p.user_id, u.username, b.title AS blog_title
+                    FROM posts AS p
+                    FULL JOIN blogs AS b ON p.blog_id=b.blog_id
+                    FULL JOIN users AS u ON p.user_id=u.user_id
+                    ORDER BY p.post_id DESC`);
+
+        return result.rows;
     }
 
     /** Find all post from a blog. */
