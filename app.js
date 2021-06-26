@@ -4,7 +4,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: ['https://key-blogger.netlify.app']
+}));
 
 // logging system
 const morgan = require("morgan");
