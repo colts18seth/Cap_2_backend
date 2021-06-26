@@ -10,9 +10,10 @@ const { validate } = require("jsonschema");
 const { postNewSchema, postUpdateSchema } = require("../schemas");
 const jwt = require("jsonwebtoken");
 const { SECRET } = require("../config");
+const cors = require("cors");
 
 /** GET / =>  {posts: {post: {}, post, {}}}   */
-router.get("/", async function (req, res, next) {
+router.get("/", cors(), async function (req, res, next) {
     try {
         const posts = await Post.findRecent(req.query);
         return res.json({ posts });
@@ -23,7 +24,7 @@ router.get("/", async function (req, res, next) {
 });
 
 /** GET /[id]  =>  {post: post} */
-router.get("/:id", async function (req, res, next) {
+router.get("/:id", cors(), async function (req, res, next) {
     try {
         const post = await Post.findOne(req.params.id);
         return res.json({ post });
@@ -34,7 +35,7 @@ router.get("/:id", async function (req, res, next) {
 });
 
 /** POST / {postData} =>  {post: newpost} */
-router.post("/", authRequired, async function (req, res, next) {
+router.post("/", cors(), authRequired, async function (req, res, next) {
     try {
         const validation = validate(req.body, postNewSchema);
 
@@ -55,7 +56,7 @@ router.post("/", authRequired, async function (req, res, next) {
     }
 });
 
-router.post("/:id/vote/:direction", async function (req, res, next) {
+router.post("/:id/vote/:direction", cors(), async function (req, res, next) {
     try {
         let delta = req.params.direction === "up" ? +1 : -1;
         const result = await Post.vote(delta, req.params.id)
@@ -66,7 +67,7 @@ router.post("/:id/vote/:direction", async function (req, res, next) {
 });
 
 /** PATCH /[title] {postData} => {post: updatedpost}  */
-router.patch("/:id", async function (req, res, next) {
+router.patch("/:id", cors(), async function (req, res, next) {
     try {
         const { username } = await Post.findOne(req.params.id);
         const token = jwt.verify(req.body._token, SECRET);
@@ -92,7 +93,7 @@ router.patch("/:id", async function (req, res, next) {
 });
 
 /** DELETE /[title]  =>  {message: "Post deleted"}  */
-router.delete("/:id", async function (req, res, next) {
+router.delete("/:id", cors(), async function (req, res, next) {
     try {
         const { username } = await Post.findOne(req.params.id);
         const token = jwt.verify(req.body._token, SECRET);
